@@ -17,7 +17,7 @@ var getComments = function (count) {
   var result = [];
   for (var i = 0; i < count; i++) {
     result.push({
-      avatar: 'img/avatar-' + getRandomElement(COMMENTS_AMOUNT_MIN + 1, COMMENTS_AMOUNT_MAX + 1) + '.svg',
+      avatar: 'img/avatar-' + (getRandomElement(COMMENTS_AMOUNT_MIN, COMMENTS_AMOUNT_MAX) + 1) + '.svg',
       message: COMMENT_MESSAGES[getRandomElement(COMMENTS_AMOUNT_MIN, COMMENTS_AMOUNT_MAX)],
       name: COMMENT_NAMES[getRandomElement(COMMENTS_AMOUNT_MIN, COMMENTS_AMOUNT_MAX)]
     }
@@ -58,7 +58,6 @@ var getPictureArray = function (count) {
   return pictures;
 };
 
-
 var renderPicture = function (picture) {
   var pictureElement = pictureTemplate.cloneNode(true);
   var pictureImg = pictureElement.querySelector('.picture__img');
@@ -75,3 +74,33 @@ pictureArray.forEach(function (picture) {
   fragment.appendChild(renderPicture(picture));
 });
 picturesElement.appendChild(fragment);
+
+var userDialog = document.querySelector('.big-picture');
+userDialog.classList.remove('hidden');
+
+var bigPictureImg = userDialog.querySelector('.big-picture__img').querySelector('img');
+bigPictureImg.src = pictureArray[0].url;
+var bigPictureLikes = userDialog.querySelector('.likes-count');
+bigPictureLikes.textContent = pictureArray[0].likes;
+var bigPictureComments = userDialog.querySelector('.comments-count');
+bigPictureComments.textContent = pictureArray[0].comments.length;
+var commentsList = userDialog.querySelector('.social__comments');
+
+var socialFragment = document.createDocumentFragment();
+var socialComments = pictureArray[0].comments;
+socialComments.forEach(function (comment) {
+  var socialElement = commentsList.querySelector('.social__comment').cloneNode(true);
+  var socialElementImg = socialElement.querySelector('img');
+  socialElementImg.src = comment.avatar;
+  socialElementImg.alt = comment.name;
+  socialElement.querySelector('.social__text').textContent = comment.message;
+  socialFragment.appendChild(socialElement);
+});
+commentsList.appendChild(socialFragment);
+
+var socialCaption = userDialog.querySelector('.social__caption');
+socialCaption.textContent = pictureArray[0].description;
+
+userDialog.querySelector('.social__comment-count').classList.add('hidden');
+userDialog.querySelector('.comments-loader').classList.add('hidden');
+document.querySelector('body').classList.add('modal-open');
